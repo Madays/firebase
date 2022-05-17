@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         ...doc.data()
     }))
     console.log(contacts)
-    res.render('index')
+    res.render('index', {contacts})
 })
 
 router.post('/new-contact', async (req, res) => {
@@ -21,28 +21,24 @@ router.post('/new-contact', async (req, res) => {
         email,
         phone
     })
-    res.send('new contact created')
+    res.redirect('/')
 })
 
 router.get('/edit-contact/:id', async(req, res) => {
     console.log(req.params.id);
     const doc = await db.collection('contacts').doc(req.params.id).get()
-    console.log({
-        id: doc.id,
-        ...doc.data()
-    });
-    res.send('edit contact')
+    res.render('index', { contact: {id: doc.id, ...doc.data()}})
 })
 
 router.get('/delete-contact/:id', async (req, res) => {
     await db.collection('contacts').doc(req.params.id).delete()
-    res.send('contact deleted')
+    res.redirect('/')
 })
 
 router.post('/update-contact/:id', async (req, res) => {
-    const {id} = req.params
+    const {id} = req.params;
     await db.collection('contacts').doc(id).update(req.body)
 
-    res.send('contact updated')
+    res.redirect("/");
 })
 module.exports = router;
